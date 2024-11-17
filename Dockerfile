@@ -1,14 +1,17 @@
-FROM golang:alpine AS builder
+FROM golang:1.21-alpine as builder
 
 WORKDIR /app
 
+COPY go.mod .   
+
+RUN go mod tidy
+
 COPY . .
 
-RUN go build -o fullcycle main.go
+RUN go build -o fullcycle .
 
-FROM scratch
+FROM alpine:latest
 
 COPY --from=builder /app/fullcycle /fullcycle
 
-ENTRYPOINT ["/fullcycle"]
-
+CMD ["/fullcycle"]
